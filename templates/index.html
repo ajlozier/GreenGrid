@@ -1,24 +1,406 @@
 <html>
 	<head>
-		<title>How many Greens?</title>
+		<title>Green Grid - Boulder's Green Mountain Tracker</title>
 		<link rel="icon" type="image/x-icon" href="/favicon.ico">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+		<style>
+			:root {
+				--bg-dark: #0a0f0d;
+				--bg-card: #121a16;
+				--accent-green: #22c55e;
+				--accent-green-dim: #166534;
+				--accent-lime: #84cc16;
+				--text-primary: #f0fdf4;
+				--text-secondary: #86efac;
+				--text-muted: #4ade80;
+				--border-color: #1e3a2f;
+			}
+
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				font-family: 'Outfit', sans-serif;
+				background: var(--bg-dark);
+				color: var(--text-primary);
+				min-height: 100vh;
+				line-height: 1.6;
+				background-image: 
+					radial-gradient(ellipse at 20% 0%, rgba(34, 197, 94, 0.15) 0%, transparent 50%),
+					radial-gradient(ellipse at 80% 100%, rgba(132, 204, 22, 0.1) 0%, transparent 50%);
+			}
+
+			.container {
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 3rem 1.5rem;
+			}
+
+			header {
+				text-align: center;
+				margin-bottom: 3rem;
+			}
+
+			h1 {
+				font-size: 2.5rem;
+				font-weight: 700;
+				background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-lime) 100%);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+				margin-bottom: 0.5rem;
+				letter-spacing: -0.02em;
+			}
+
+			.tagline {
+				color: var(--text-secondary);
+				font-size: 1.1rem;
+				font-weight: 300;
+			}
+
+			.user-card {
+				background: var(--bg-card);
+				border: 1px solid var(--border-color);
+				border-radius: 16px;
+				padding: 2rem;
+				margin-bottom: 2rem;
+			}
+
+			.user-greeting {
+				font-size: 1.25rem;
+				margin-bottom: 0.5rem;
+			}
+
+			.user-greeting a {
+				color: var(--accent-green);
+				text-decoration: none;
+				font-weight: 600;
+			}
+
+			.user-greeting a:hover {
+				text-decoration: underline;
+			}
+
+			.summit-count {
+				font-family: 'JetBrains Mono', monospace;
+				font-size: 3rem;
+				font-weight: 700;
+				color: var(--accent-lime);
+				margin: 1rem 0;
+			}
+
+			.summit-label {
+				color: var(--text-muted);
+				font-size: 0.9rem;
+				text-transform: uppercase;
+				letter-spacing: 0.1em;
+			}
+
+			/* Grid Progress Section */
+			.grid-section {
+				margin-top: 2rem;
+				padding-top: 2rem;
+				border-top: 1px solid var(--border-color);
+			}
+
+			.grid-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: baseline;
+				margin-bottom: 1rem;
+			}
+
+			.grid-title {
+				font-size: 1.1rem;
+				font-weight: 600;
+				color: var(--text-secondary);
+			}
+
+			.grid-stats {
+				font-family: 'JetBrains Mono', monospace;
+				font-size: 1.25rem;
+				color: var(--accent-green);
+			}
+
+			.progress-container {
+				background: var(--bg-dark);
+				border-radius: 12px;
+				height: 28px;
+				overflow: hidden;
+				position: relative;
+				border: 1px solid var(--border-color);
+			}
+
+			.progress-bar {
+				height: 100%;
+				background: linear-gradient(90deg, var(--accent-green-dim) 0%, var(--accent-green) 50%, var(--accent-lime) 100%);
+				border-radius: 11px;
+				transition: width 1s ease-out;
+				position: relative;
+				min-width: 2px;
+			}
+
+			.progress-bar::after {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: linear-gradient(
+					90deg,
+					transparent 0%,
+					rgba(255,255,255,0.1) 50%,
+					transparent 100%
+				);
+				animation: shimmer 2s infinite;
+			}
+
+			@keyframes shimmer {
+				0% { transform: translateX(-100%); }
+				100% { transform: translateX(100%); }
+			}
+
+			.progress-percent {
+				position: absolute;
+				right: 12px;
+				top: 50%;
+				transform: translateY(-50%);
+				font-family: 'JetBrains Mono', monospace;
+				font-size: 0.85rem;
+				font-weight: 600;
+				color: var(--text-primary);
+				text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+			}
+
+			.grid-description {
+				margin-top: 1rem;
+				font-size: 0.85rem;
+				color: var(--text-muted);
+				line-height: 1.5;
+			}
+
+			/* Connect Button */
+			.connect-section {
+				background: var(--bg-card);
+				border: 1px solid var(--border-color);
+				border-radius: 16px;
+				padding: 3rem 2rem;
+				text-align: center;
+				margin-bottom: 2rem;
+			}
+
+			.connect-section p {
+				margin-bottom: 1.5rem;
+				color: var(--text-secondary);
+			}
+
+			.connect-section a img {
+				transition: transform 0.2s ease, filter 0.2s ease;
+			}
+
+			.connect-section a:hover img {
+				transform: scale(1.05);
+				filter: brightness(1.1);
+			}
+
+			/* Leaderboard */
+			.leaderboard {
+				background: var(--bg-card);
+				border: 1px solid var(--border-color);
+				border-radius: 16px;
+				overflow: hidden;
+			}
+
+			.leaderboard-header {
+				padding: 1.25rem 1.5rem;
+				border-bottom: 1px solid var(--border-color);
+				font-weight: 600;
+				font-size: 1.1rem;
+				color: var(--text-secondary);
+			}
+
+			.leaderboard-item {
+				display: grid;
+				grid-template-columns: 40px 1fr auto auto;
+				gap: 1rem;
+				align-items: center;
+				padding: 1rem 1.5rem;
+				border-bottom: 1px solid var(--border-color);
+				transition: background 0.2s ease;
+			}
+
+			.leaderboard-item:last-child {
+				border-bottom: none;
+			}
+
+			.leaderboard-item:hover {
+				background: rgba(34, 197, 94, 0.05);
+			}
+
+			.rank {
+				font-family: 'JetBrains Mono', monospace;
+				font-weight: 600;
+				color: var(--text-muted);
+				font-size: 0.9rem;
+			}
+
+			.rank.top-3 {
+				color: var(--accent-lime);
+			}
+
+			.athlete-name a {
+				color: var(--text-primary);
+				text-decoration: none;
+				font-weight: 500;
+			}
+
+			.athlete-name a:hover {
+				color: var(--accent-green);
+			}
+
+			.athlete-stats {
+				text-align: right;
+			}
+
+			.athlete-summits {
+				font-family: 'JetBrains Mono', monospace;
+				font-size: 1.1rem;
+				font-weight: 600;
+				color: var(--accent-green);
+			}
+
+			.athlete-grid {
+				font-family: 'JetBrains Mono', monospace;
+				font-size: 0.8rem;
+				color: var(--text-muted);
+			}
+
+			.last-updated {
+				font-size: 0.75rem;
+				color: var(--text-muted);
+				text-align: right;
+			}
+
+			/* Actions */
+			.actions {
+				margin: 2rem 0;
+				text-align: center;
+			}
+
+			.logout-link {
+				color: var(--text-muted);
+				text-decoration: none;
+				font-size: 0.9rem;
+				padding: 0.5rem 1rem;
+				border: 1px solid var(--border-color);
+				border-radius: 8px;
+				transition: all 0.2s ease;
+			}
+
+			.logout-link:hover {
+				color: var(--text-primary);
+				border-color: var(--accent-green);
+			}
+
+			.refresh-hint {
+				color: var(--text-muted);
+				font-size: 0.85rem;
+				margin-top: 0.75rem;
+			}
+
+			/* Footer */
+			footer {
+				margin-top: 3rem;
+				text-align: center;
+				padding-top: 2rem;
+				border-top: 1px solid var(--border-color);
+			}
+
+			footer img {
+				max-width: 180px;
+				opacity: 0.8;
+			}
+		</style>
 	</head>
 	<body>
-		{% if name %}
-		<p>Hi, <a href="https://www.strava.com/athletes/{{ id }}">{{ name }}</a></p>
-		<p>You've done Green {{ greens }} times! Log out and log back in to update your stats.</p>
-		{% else %}
-		<p><a href='{{ url }}'><img style="vertical-align:middle" src="/media/btn_strava_connectwith_orange.svg" alt="Connect with Strava" /></a> to view how many times you've done Green.</p>
-		{% endif %}
-		<div id="list">
-			{% for person in people %}
-			<a href="https://www.strava.com/athletes/{{ person.id }}">{{ person.name }}</a> has done {{ person.greens }} as of {{ person.lastupdate }} day{% if person.lastupdate != 1 %}s{% endif %} ago.<br />
-			{% endfor %}
+		<div class="container">
+			<header>
+				<h1>🏔️ Green Grid</h1>
+				<p class="tagline">Track your Green Mountain summits in Boulder, CO</p>
+			</header>
+
+			{% if name %}
+			<div class="user-card">
+				<p class="user-greeting">Welcome back, <a href="https://www.strava.com/athletes/{{ id }}">{{ name }}</a></p>
+				<p class="summit-label">Total Summits</p>
+				<p class="summit-count">{{ greens }}</p>
+				
+				<div class="grid-section">
+					<div class="grid-header">
+						<span class="grid-title">Grid Progress</span>
+						<span class="grid-stats">{{ grid_count }} / {{ grid_total }}</span>
+					</div>
+					<div class="progress-container">
+						<div class="progress-bar" style="width: {{ grid_percent }}%;"></div>
+						<span class="progress-percent">{{ grid_percent }}%</span>
+					</div>
+					<p class="grid-description">
+						The Grid: Summit Green Mountain on every unique day of the year (including Feb 29).
+						You've completed {{ grid_count }} of {{ grid_total }} days.
+						{% if grid_count == grid_total %}
+						🎉 Congratulations, you've completed the Grid!
+						{% elif grid_count > 300 %}
+						Almost there! Keep pushing!
+						{% elif grid_count > 180 %}
+						Over halfway—great progress!
+						{% elif grid_count > 0 %}
+						Every summit counts. Keep climbing!
+						{% endif %}
+					</p>
+				</div>
+
+				<p class="refresh-hint">Log out and log back in to refresh your stats.</p>
+			</div>
+			{% else %}
+			<div class="connect-section">
+				<p>Connect with Strava to see how many times you've summited Green Mountain and track your grid progress.</p>
+				<a href='{{ url }}'><img src="/media/btn_strava_connectwith_orange.svg" alt="Connect with Strava" /></a>
+			</div>
+			{% endif %}
+
+			<div class="leaderboard">
+				<div class="leaderboard-header">🏆 Leaderboard</div>
+				{% for person in people %}
+				<div class="leaderboard-item">
+					<span class="rank {% if loop.index <= 3 %}top-3{% endif %}">#{{ loop.index }}</span>
+					<span class="athlete-name"><a href="https://www.strava.com/athletes/{{ person.id }}">{{ person.name }}</a></span>
+					<span class="athlete-stats">
+						<div class="athlete-summits">{{ person.greens }}</div>
+						{% if person.grid_count > 0 %}
+						<div class="athlete-grid">{{ person.grid_count }}/{{ grid_total|default(366) }} grid</div>
+						{% endif %}
+					</span>
+					<span class="last-updated">{{ person.lastupdate }}d ago</span>
+				</div>
+				{% endfor %}
+			</div>
+
+			{% if name %}
+			<div class="actions">
+				<a href="/logout" class="logout-link">Log Out</a>
+			</div>
+			{% endif %}
+
+			<footer>
+				<img src="/media/api_logo_pwrdBy_strava_horiz_light.svg" alt="Powered by Strava" />
+			</footer>
 		</div>
-		{% if name %}
-		<p><a href="/logout">Log Out</a></p>
-		{% endif %}
-		<div style="width: 250px;"><img src="/media/api_logo_pwrdBy_strava_horiz_light.svg" alt="Powered by Strava" /></div>
 		<script defer data-domain="strava.mack.im" src="https://plausible.mack.im/js/plausible.js"></script>
 	</body>
 </html>

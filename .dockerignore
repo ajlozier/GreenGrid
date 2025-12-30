@@ -1,0 +1,38 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Secrets (mounted as volume instead)
+secrets.py
+
+# Docker & Deployment
+Dockerfile
+docker-compose.yml
+.dockerignore
+cloudformation.yaml
+
+# Documentation
+README.md
+
+# Misc
+*.log
+.DS_Store
+

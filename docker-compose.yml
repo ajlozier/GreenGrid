@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: greengrid-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: strava
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d strava"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: greengrid-app
+    ports:
+      - "5001:5000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db/strava
+      SILENCE_TOKEN_WARNINGS: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./secrets.py:/app/secrets.py:ro
+
+volumes:
+  postgres_data:
+
