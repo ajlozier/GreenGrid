@@ -68,6 +68,14 @@ class GreensModel(db.Model):
 	def __repr__(self):
 		return f"<Green {self.name}>"
 
+# Create tables on startup
+with app.app_context():
+	try:
+		print(f"Database URL: {app.config['SQLALCHEMY_DATABASE_URI'][:50]}...")
+		db.create_all()
+		print("Database tables created successfully")
+	except Exception as e:
+		print(f"Error creating database tables: {e}")
 
 def get_grid_days(client, segments):
 	"""
@@ -207,6 +215,12 @@ if __name__ == '__main__':
 	if len(sys.argv) == 2:
 		serverURL = sys.argv[1]
 	print("Website starting at: "+serverURL)
+	
+	# Create database tables if they don't exist
+	with app.app_context():
+		db.create_all()
+		print("Database tables initialized")
+	
 	# Listen on 0.0.0.0 to be accessible from outside Docker container
 	serve(app, host='0.0.0.0', port=5000)
 

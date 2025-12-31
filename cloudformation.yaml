@@ -422,6 +422,8 @@ Resources:
             StatusCode: HTTP_301
 
   # ECS Service
+  # NOTE: DesiredCount starts at 0. After pushing your Docker image to ECR, scale up with:
+  # aws ecs update-service --cluster <cluster> --service <service> --desired-count 1
   ECSService:
     Type: AWS::ECS::Service
     DependsOn: ALBListenerHTTPS
@@ -429,7 +431,7 @@ Resources:
       ServiceName: !Sub '${AWS::StackName}-service'
       Cluster: !Ref ECSCluster
       TaskDefinition: !Ref TaskDefinition
-      DesiredCount: 1
+      DesiredCount: 0
       LaunchType: FARGATE
       NetworkConfiguration:
         AwsvpcConfiguration:

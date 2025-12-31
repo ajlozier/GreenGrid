@@ -322,6 +322,22 @@
 				border-top: 1px solid var(--border-color);
 			}
 
+			footer .credits {
+				font-size: 0.85rem;
+				color: var(--text-muted);
+				margin-bottom: 1rem;
+			}
+
+			footer .credits a {
+				color: var(--text-secondary);
+				text-decoration: none;
+			}
+
+			footer .credits a:hover {
+				color: var(--accent-green);
+				text-decoration: underline;
+			}
+
 			footer img {
 				max-width: 180px;
 				opacity: 0.8;
@@ -398,6 +414,10 @@
 			{% endif %}
 
 			<footer>
+				<p class="credits">
+					Based on <a href="https://strava.mack.im/" target="_blank">How Many Greens</a> 
+					by <a href="https://github.com/mackmgg" target="_blank">Mack Goodstein</a>
+				</p>
 				<img src="/media/api_logo_pwrdBy_strava_horiz_light.svg" alt="Powered by Strava" />
 			</footer>
 		</div>
